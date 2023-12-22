@@ -1,0 +1,343 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MENTOR
+  MODERATOR
+  STUDENT
+}
+
+model Profile {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId  String?
+  mentorId String? @db.ObjectId
+  role     Role
+
+  name     String?
+  email    String?
+  imageUrl String
+  about    String? @db.String
+
+  subjectIds          String[] @db.ObjectId
+  courseIds           String[] @db.ObjectId
+  followingMentorIds  String[] @db.ObjectId
+  subscribedMentorIds String[] @db.ObjectId
+
+  appointmentIds  String[] @db.ObjectId
+  reviewIds       String[] @db.ObjectId
+  purchaseIds     String[] @db.ObjectId
+  subscriptionIds String[] @db.ObjectId
+  orderIds        String[] @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Mentor {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId String?
+
+  followingStudentIds        String[] @db.ObjectId
+  subscribedStudentIds       String[] @db.ObjectId
+  purchasedCourseStudentIds  String[] @db.ObjectId
+  purchasedSubjectStudentIds String[] @db.ObjectId
+
+  appointmentIds String[] @db.ObjectId
+  purchaseIds     String[] @db.ObjectId
+  subscriptionIds String[] @db.ObjectId
+  orderIds        String[] @db.ObjectId
+
+  mentorReviewIds  String[] @db.ObjectId
+  courseReviewIds  String[] @db.ObjectId
+  subjectReviewIds String[] @db.ObjectId
+
+  courseIds  String[] @db.ObjectId
+  skillIds   String[] @db.ObjectId
+  subjectIds String[] @db.ObjectId
+
+  firstName String?
+  lastName  String?
+  userName  String?
+  title     String?
+  location  String?
+  imageUrl  String?
+  about     String? @db.String
+  startHour String?
+  endHour   String?
+  timezone String?
+  email     String?
+
+  rateCost         Float?
+  subscriptionCost Float?
+  totalEarned      Float?
+
+  freelanceUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  mentorId String @db.ObjectId
+
+  name        String
+  imageUrl    String?
+  description String? @db.String
+  experience  String? @db.String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  profileId String @db.ObjectId
+  mentorId  String @db.ObjectId
+
+  courseId  String? @db.ObjectId
+  subjectId String? @db.ObjectId
+
+  rating Float
+  review String? @db.String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subject {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId  String?
+  mentorId String  @db.ObjectId
+
+  imageUrl    String
+  name        String
+  cost        Float?
+  description String   @db.String
+  featureIds  String[] @db.ObjectId
+  sectionIds  String[] @db.ObjectId
+
+  reviewIds  String[] @db.ObjectId
+  studentIds String[] @db.ObjectId
+  inviteCode String   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId  String?
+  mentorId String  @db.ObjectId
+
+  imageUrl    String
+  videoUrl    String?
+  name        String
+  cost        Float?
+  description String  @db.String
+
+  featureIds String[] @db.ObjectId
+  sectionIds String[] @db.ObjectId
+  reviewIds  String[] @db.ObjectId
+  studentIds String[] @db.ObjectId
+
+  inviteCode String @unique
+
+  totalTime      Int?
+  courseComplete Boolean?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Feature {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  mentorId  String  @db.ObjectId
+  courseId  String? @db.ObjectId
+  subjectId String? @db.ObjectId
+  sectionId String? @db.ObjectId
+
+  title       String @db.String
+  description String @db.String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Section {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  mentorId  String  @db.ObjectId
+  subjectId String? @db.ObjectId
+  courseId  String? @db.ObjectId
+
+  imageUrl String?
+  videoUrl String?
+  name     String
+ 
+
+
+  description String @db.String
+  featureIds String[] @db.String
+
+  articleIds String[] @db.ObjectId
+
+  estimatedTime   Int?
+  sectionComplete Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Article {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  mentorId         String  @db.ObjectId
+  sectionId String @db.ObjectId
+
+
+  name      String
+  description String
+  videoUrl  String?
+  imageUrls String[]
+  resourceUrls String[]
+
+  instructions String[] @db.String
+
+  articleComplete Boolean
+  estimatedTime   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+   id               String  @id @default(auto()) @map("_id") @db.ObjectId
+   mentorId String @db.ObjectId
+   profileId String @db.ObjectId
+
+studentEmail String 
+
+   title String?
+   description String?
+   startDate DateTime
+   startTime String?
+   endTime String?
+   estimatedTime Int?
+
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+}
+
+model studentProgress {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  currentStudentId String? @db.ObjectId
+  currentMentorId  String? @db.ObjectId
+
+  currentSubjectId String? @db.ObjectId
+  currentCourseId  String? @db.ObjectId
+
+  currentSectionId String? @db.ObjectId
+  currentArticleId String? @db.ObjectId
+
+  completedSubjectIds String[] @db.ObjectId
+  completedCourseIds  String[] @db.ObjectId
+
+  completedSectionIds String[] @db.ObjectId
+  completedArticleIds String[] @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Quiz system Mockup, might use library/package instead
+// model Quiz {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+//   mentorId String @db.ObjectId
+//   subjectId String? @db.ObjectId
+//   courseId String? @db.ObjectId
+
+//   questionIds String[] @db.ObjectId
+//   title String
+//   instructions String[] @db.String
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+// }
+// model Question {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+//   mentorId String @db.ObjectId
+//   quizId String? @db.ObjectId
+
+//   title String
+//   question String @db.String
+//   answerIds String[] @db.ObjectId
+//   answerId String? @db.ObjectId
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+// }
+
+// model Answer {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+//   mentorId String @db.ObjectId
+//   questionId String @db.ObjectId
+
+//   answer String @db.String
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+model MentorInviteCode {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId    String
+  inviteCode String @unique
+}
+
+model Subscription {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  studentId String @db.ObjectId
+  mentorId  String @db.ObjectId
+  cost      Float?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+  endedAt   DateTime?
+}
+
+model Purchase {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+
+  amount    Float?
+  studentId String  @db.ObjectId
+  mentorId  String  @db.ObjectId
+
+  courseId  String? @db.ObjectId
+  subjectId String? @db.ObjectId
+  appointmentId String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  studentId String @db.ObjectId
+  mentorId  String @db.ObjectId
+
+  purchaseId     String? @db.ObjectId
+  subscriptionId String? @db.ObjectId
+
+  amount Float?
+}
